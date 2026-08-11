@@ -1,0 +1,10 @@
+{
+  "rom": "build/rom.bin",
+  "devices": {
+    "display": true,
+    "keyboard": true
+  },
+  "ipd": 50000,
+  "stepMode": false,
+  "fullscreen": false
+}
