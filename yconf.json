@@ -4,7 +4,7 @@
     "display": true,
     "keyboard": true
   },
-  "ipd": 50000,
-  "stepMode": true,
+  "ipd": 500000,
+  "stepMode": false,
   "fullscreen": false
 }
