@@ -5,6 +5,6 @@
     "keyboard": true
   },
   "ipd": 50000,
-  "stepMode": false,
+  "stepMode": true,
   "fullscreen": false
 }

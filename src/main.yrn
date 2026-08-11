@@ -1,3 +1,9 @@
+%extern device_init_interrupt
+%extern device_input_interrupt
+%extern lib_puts
+%extern lib_getc
+%extern lib_putc
+
 %org 0x0000                     ; boot section
 
 jmp main
@@ -10,10 +16,8 @@ jmp main
 
 %org 0x0400                     ; code section
 
-%include "lib/stdio.yrn"
-
 welcome_message:
-    %asciz "Hello world\n"            ; welcome message
+    %asciz "Hello world\n"      ; welcome message
 
 main:
     ldid $10, welcome_message

@@ -5,7 +5,7 @@
 ; Parameters:
 ;   $10 - character to be printed
 ;
-%define lib_putc lib_display_device_putc
+%aliasl lib_putc lib_display_device_putc
 
 ;
 ; Prints a ASCII null-terminated string to the console
