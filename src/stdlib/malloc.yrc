@@ -1,0 +1,75 @@
+struct FreeMemory
+{
+    FreeMemory* nextFreeMemory;
+    u32 size;
+}
+
+FreeMemory* g_firstFreeMemory;
+
+void lib_malloc_init(u32 freeMemoryStart, u32 freeMemorySize)
+{
+    g_firstFreeMemory = freeMemoryStart;
+    g_firstFreeMemory->size = freeMemorySize;
+    g_firstFreeMemory->nextFreeMemory = 0;
+}
+
+u32 lib_malloc(u32 memorySize)
+{
+    // Ensure memorySize includes space for the metadata structure
+    // so we can free/manage it later if needed.
+    u32 totalRequiredSize = memorySize + sizeof(FreeMemory);
+
+    FreeMemory* current = g_firstFreeMemory;
+    FreeMemory* previous = 0;
+
+    // Traverse the linked list of free memory blocks
+    while (current != 0)
+    {
+        if (current->size >= totalRequiredSize)
+        {
+            // Found a block that is large enough
+            u32 allocatedAddress = (u32)current;
+            u32 remainingSize = current->size - totalRequiredSize;
+
+            if (remainingSize >= sizeof(FreeMemory))
+            {
+                // Create a new free block for the leftover space
+                FreeMemory* newFreeBlock = (FreeMemory*)(allocatedAddress + totalRequiredSize);
+                newFreeBlock->size = remainingSize;
+                newFreeBlock->nextFreeMemory = current->nextFreeMemory;
+
+                // Update pointers in the free list
+                if (previous == 0)
+                {
+                    g_firstFreeMemory = newFreeBlock;
+                }
+                else
+                {
+                    previous->nextFreeMemory = newFreeBlock;
+                }
+            }
+            else
+            {
+                // Not enough remaining space to form a valid free block;
+                // allocate the whole block to avoid internal fragmentation/loss of tracking.
+                if (previous == 0)
+                {
+                    g_firstFreeMemory = current->nextFreeMemory;
+                }
+                else
+                {
+                    previous->nextFreeMemory = current->nextFreeMemory;
+                }
+            }
+
+            // Return the pointer immediately past the header metadata
+            return allocatedAddress + sizeof(FreeMemory);
+        }
+
+        previous = current;
+        current = current->nextFreeMemory;
+    }
+
+    // Out of memory: no suitable block found
+    return 0;
+}
